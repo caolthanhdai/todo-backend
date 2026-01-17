@@ -1,0 +1,125 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TaskStatus {
+  todo 
+  in_progress 
+  done 
+}
+enum TaskPriority { 
+  low 
+  medium 
+  high 
+}
+enum Role {
+  manager
+  member
+  viewer
+}
+
+model User {
+  userId                String @id @default(uuid())
+  name                  String 
+  email                 String @unique
+  passwordHash          String
+  avatarSrc             String?
+  location              String?
+  unreadNotifications   Int @default(0)
+  createdAt             DateTime @default(now())
+  updateAt              DateTime @updatedAt
+
+  tasksCreated          Task[] @relation("TasksCreated")
+  tasksMembers          TaskMember[]
+  messages              TaskMessage[]
+  fileUploaded          File[] @relation("FilesUploadedBy")
+  images                UploadedImage[]
+  refreshTokens         RefreshToken[]
+}
+
+model Task {
+  taskId                String @id @default(uuid())
+  title                 String 
+  description           String @default("")
+  status                TaskStatus @default(todo)
+  priority              TaskPriority @default(medium)
+  dueTime               DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  createdById           String 
+
+  createdBy             User @relation("TasksCreated", fields: [createdById], references: [userId], onDelete: Cascade)
+  members               TaskMember[]
+  messages              TaskMessage[]
+  files                 File[]
+  images                UploadedImage[]
+}
+
+model TaskMember {
+  taskId                String 
+  userId                String            
+  role                  Role 
+  task                  Task @relation(fields: [taskId], references:[taskId], onDelete: Cascade)
+  user                  User @relation(fields: [userId],references: [userId], onDelete: Cascade)
+  @@id([taskId, userId])
+} 
+
+model TaskMessage {
+  messageId String   @id @default(uuid())
+  taskId    String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+  editedAt  DateTime?
+  task      Task     @relation(fields: [taskId], references: [taskId], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [userId], onDelete: Cascade)
+}
+
+model File {
+  fileId       String   @id @default(uuid())
+  name         String
+  url          String
+  size         Int
+  type         String
+  uploadedAt   DateTime @default(now())
+  uploadedById String
+  uploadedBy   User     @relation("FilesUploadedBy", fields: [uploadedById], references: [userId], onDelete: SetNull)
+  taskId       String
+  task         Task     @relation(fields: [taskId], references: [taskId], onDelete: Cascade)
+}
+
+model UploadedImage {
+  imageId      String   @id @default(uuid())
+  name         String
+  url          String
+  size         Int
+  type         String
+  uploadedAt   DateTime @default(now())
+  uploadedById String
+  uploadedBy   User     @relation(fields: [uploadedById], references: [userId], onDelete: SetNull)
+  taskId       String
+  task         Task     @relation(fields: [taskId], references: [taskId], onDelete: Cascade)
+}
+
+
+
+model RefreshToken {
+  id         String   @id @default(uuid())
+  token      String   @unique
+  userId     String
+  user       User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  isRevoked  Boolean  @default(false)
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+}
+
+
+
+
+
