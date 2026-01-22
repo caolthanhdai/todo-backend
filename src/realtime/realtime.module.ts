@@ -1,12 +1,11 @@
-// realtime.module.ts
 import { Module } from '@nestjs/common';
 import { RealtimeGateway } from './realtime.gateway';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthModule } from '../auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [AuthModule],
+  imports: [JwtModule.register({}), ConfigModule],
   providers: [RealtimeGateway],
-  exports: [RealtimeGateway], // ⬅ cho service khác dùng
+  exports: [RealtimeGateway],
 })
 export class RealtimeModule {}
