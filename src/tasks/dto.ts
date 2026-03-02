@@ -71,21 +71,17 @@ export interface TaskResponseDto {
   priority: TaskPriority;
 
   members: TaskMemberResponseDto[];
-
+  myRole: Role;
   files?: {
     id: string;
     name: string;
     url: string;
-    files?: {
-      id: string;
+
+    uploadedAt: string;
+    uploadedBy?: {
+      userId: string;
       name: string;
-      url: string;
-      uploadedAt: string;
-      uploadedBy?: {
-        userId: string;
-        name: string;
-      };
-    }[];
+    };
   }[];
 
   images?: {
@@ -107,4 +103,16 @@ export interface TaskResponseDto {
 export class AddTaskMemberDto {
   @IsEmail()
   email!: string;
+}
+
+export interface TaskSearchResponseDto {
+  taskId: string;
+  title: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+
+  myRole: Role;
+  messagesCount: number;
+
+  updatedAt: string;
 }

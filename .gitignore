@@ -15,6 +15,9 @@ lerna-debug.log*
 # OS
 .DS_Store
 
+# other
+uploads
+
 # Tests
 /coverage
 /.nyc_output
@@ -41,7 +44,7 @@ lerna-debug.log*
 .env.test.local
 .env.production.local
 .env.local
-
+.env.production
 # temp directory
 .temp
 .tmp

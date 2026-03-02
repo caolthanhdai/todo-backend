@@ -64,22 +64,39 @@ export class AuthService {
   }
 
   async login(dto: LoginDto): Promise<AuthResponseHaveRefreshTokenDto> {
-    const isNotUser = isEmail(dto.identifier);
-    // find user by email or name
+    const isEmailLogin = isEmail(dto.identifier);
+
     const user = await this.prisma.user.findFirst({
-      where: isNotUser ? { email: dto.identifier } : { name: dto.identifier },
+      where: isEmailLogin
+        ? { email: dto.identifier }
+        : { name: dto.identifier },
     });
+
     if (!user) {
       throw new UnauthorizedException('Email or name or password is incorrect');
     }
-    // create Token
+
+    const isPasswordValid = await bcrypt.compare(
+      dto.password,
+      user.passwordHash,
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Email or name or password is incorrect');
+    }
+
     const accessToken = await this.signAccessToken(user.userId, user.email);
     const refreshToken = await this.signRefreshToken(user.userId, user.email);
-    // add refresh token to db
+
+    await this.prisma.refreshToken.deleteMany({
+      where: { userId: user.userId },
+    });
+
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+
     await this.prisma.refreshToken.create({
       data: {
         userId: user.userId,
-        token: refreshToken,
+        token: hashedRefreshToken,
         expiresAt: this.getRefreshExpireDate(),
       },
     });

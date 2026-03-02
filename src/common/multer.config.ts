@@ -2,6 +2,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { BadRequestException } from '@nestjs/common';
 import type { Request } from 'express';
+import { join } from 'path';
 
 export const multerConfig = {
   storage: diskStorage({
@@ -11,9 +12,9 @@ export const multerConfig = {
       cb: (error: Error | null, destination: string) => void,
     ) => {
       if (file.mimetype.startsWith('image/')) {
-        cb(null, './uploads/images');
+        cb(null, join(process.cwd(), 'uploads/images'));
       } else {
-        cb(null, './uploads/files');
+        cb(null, join(process.cwd(), 'uploads/files'));
       }
     },
 
@@ -34,17 +35,9 @@ export const multerConfig = {
 
   fileFilter: (
     _req: Request,
-    file: Express.Multer.File,
+    _file: Express.Multer.File,
     cb: (error: Error | null, acceptFile: boolean) => void,
   ) => {
-    if (
-      file.mimetype.startsWith('image/') ||
-      file.mimetype === 'application/pdf'
-    ) {
-      cb(null, true);
-    } else {
-      cb(null, false);
-      throw new BadRequestException('Invalid file type');
-    }
+    return cb(null, true);
   },
 };

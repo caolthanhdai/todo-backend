@@ -41,6 +41,7 @@ model User {
   fileUploaded          File[] @relation("FilesUploadedBy")
   images                UploadedImage[]
   refreshTokens         RefreshToken[]
+  notifications       Notification[]
 }
 
 model Task {
@@ -119,6 +120,20 @@ model RefreshToken {
   createdAt  DateTime @default(now())
 }
 
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String   // message:new | task:update
+  title     String
+  content   String?
+  payload   Json?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([userId, isRead])
+}
 
 
 

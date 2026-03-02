@@ -6,7 +6,9 @@ import { UsersModule } from './users/users.module';
 import { TasksModule } from './tasks/tasks.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config/dist/config.module';
+import { MessagesModule } from './messages/messages.module';
 import { RealtimeModule } from './realtime/realtime.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { RealtimeModule } from './realtime/realtime.module';
     TasksModule,
     PrismaModule,
     RealtimeModule,
+    MessagesModule,
+    NotificationModule,
     ConfigModule.forRoot({
       isGlobal: true, // ⚠️ cực kỳ quan trọng
     }),

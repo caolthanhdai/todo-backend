@@ -81,18 +81,19 @@ export class TasksController {
 
   // ADD FILE
   @Post(':taskId/files')
-  @UseInterceptors(FileInterceptor('file', multerConfig))
+  @UseInterceptors(FileInterceptor('files', multerConfig))
   addFile(
     @Param('taskId') taskId: string,
     @UploadedFile() file: Express.Multer.File,
     @Req() req: Request,
   ) {
+    console.log('FILE:', file);
     return this.tasksService.addFile(taskId, file, (req as any).user.userId);
   }
 
   // ADD IMAGE
   @Post(':taskId/images')
-  @UseInterceptors(FileInterceptor('image', multerConfig))
+  @UseInterceptors(FileInterceptor('images', multerConfig))
   addImage(
     @Param('taskId') taskId: string,
     @UploadedFile() image: Express.Multer.File,
@@ -116,5 +117,11 @@ export class TasksController {
       dto.email,
       (req as any).user.userId,
     );
+  }
+
+  // task.controller.ts
+  @Get('my/search-lite')
+  searchMyTasksLite(@Req() req: Request, @Query('q') q?: string) {
+    return this.tasksService.searchMyTasksLite((req as any).user.userId, q);
   }
 }

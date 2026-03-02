@@ -7,7 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-  imports: [JwtModule.register({}), ConfigModule, PrismaModule],
+  imports: [JwtModule.register({ global: true }), ConfigModule, PrismaModule],
   controllers: [AuthController],
   providers: [AuthService, JwtAuthGuard],
   exports: [JwtAuthGuard, AuthService, JwtModule, ConfigModule],
