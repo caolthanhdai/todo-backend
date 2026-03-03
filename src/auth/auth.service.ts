@@ -14,6 +14,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -193,7 +194,7 @@ export class AuthService {
       },
     );
   }
-  private toUserResponse(user: any): AuthUserResponseDto {
+  private toUserResponse(user: User): AuthUserResponseDto {
     return {
       userId: user.userId,
       email: user.email,

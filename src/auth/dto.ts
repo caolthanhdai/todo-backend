@@ -53,6 +53,6 @@ export class AuthResponseHaveRefreshTokenDto {
 }
 
 export class AuthUserResponseDto {
-  userId!: number;
+  userId!: string;
   email!: string;
 }
