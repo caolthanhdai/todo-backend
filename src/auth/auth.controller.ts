@@ -41,8 +41,9 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<AuthResponseDto> {
-    // check cookie
-    const refreshToken = req.cookies?.['refresh_token'];
+    const cookies = req.cookies as { refresh_token?: string };
+    const refreshToken = cookies.refresh_token;
+
     if (!refreshToken) {
       throw new UnauthorizedException('No refresh token provided');
     }
@@ -51,19 +52,24 @@ export class AuthController {
     if (!result) {
       throw new UnauthorizedException('Refresh token invalid or expired');
     }
-    // set new cookie
+
     this.setRefreshTokenCookie(res, result.refreshToken);
-    return result;
+
+    const { refreshToken: _rt, ...rest } = result;
+    return rest;
   }
 
   @Post('logout')
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const refreshToken = req.cookies?.['refresh_token'];
+    const cookies = req.cookies as { refresh_token?: string };
+    const refreshToken = cookies.refresh_token;
+
     if (!refreshToken) {
       throw new UnauthorizedException('No refresh token provided');
     }
+
     await this.authService.logout(refreshToken);
-    // clear cookie
+
     res.clearCookie('refresh_token');
     return { message: 'Logged out successfully' };
   }

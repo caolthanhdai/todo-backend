@@ -113,17 +113,14 @@ export class AuthService {
     refreshToken: string,
   ): Promise<AuthResponseHaveRefreshTokenDto | null> {
     // verify signature and expiration
-    let payload: { sub: string; email: string } | null = null;
     try {
-      payload = await this.jwt.verifyAsync<{ sub: string; email: string }>(
-        refreshToken,
-        {
-          secret: this.config.get<string>('JWT_REFRESH_SECRET'),
-        },
-      );
-    } catch (e) {
+      await this.jwt.verifyAsync<{ sub: string; email: string }>(refreshToken, {
+        secret: this.config.get<string>('JWT_REFRESH_SECRET'),
+      });
+    } catch {
       return null;
     }
+
     // check token in db
     const tokenInDb = await this.prisma.refreshToken.findUnique({
       where: { token: refreshToken },

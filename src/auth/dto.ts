@@ -2,15 +2,12 @@ import {
   Validate,
   ValidatorConstraint,
   ValidatorConstraintInterface,
-  ValidationArguments,
   IsString,
-  IsOptional,
   IsEmail,
   MinLength,
   MaxLength,
 } from 'class-validator';
 import isEmail from 'validator/lib/isEmail';
-import { UserResponseDto } from '../users/dto';
 // data when createting new account
 export class RegisterDto {
   @IsString() @MaxLength(18) name!: string;

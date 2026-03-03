@@ -9,7 +9,6 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('me')
-  
   async getMe(@Req() req: { user: { userId: string; email: string } }) {
     const userId = req.user.userId; // lấy từ payload trong JWT guard
     return this.usersService.getMe(userId);
